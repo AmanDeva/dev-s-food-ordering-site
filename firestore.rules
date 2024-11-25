@@ -1,0 +1,38 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if the user is accessing their own data
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Menu collection - Anyone can read, only admins can write
+    match /menu/{document=**} {
+      allow read: if true;
+      allow write: if false; // Restrict menu modifications to Firebase Console/Admin SDK
+    }
+
+    // Users collection - Users can only read/write their own data
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+      
+      // Nested collections under user
+      match /{document=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Orders collection - Users can create orders and read their own orders
+    match /orders/{orderId} {
+      allow create: if isAuthenticated();
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow update, delete: if false; // Orders cannot be modified or deleted once created
+    }
+  }
+}
