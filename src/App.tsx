@@ -6,6 +6,7 @@ import AboutPage from './pages/AboutPage';
 import CartPage from './pages/CartPage';
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
+import ContactPage from './pages/ContactPage';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
               <Route path="/cart" element={<CartPage />} />
               <Route path="/signup" element={<SignUpPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/contact" element={<ContactPage />} />
             </Routes>
           </main>
         </div>
